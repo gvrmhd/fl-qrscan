@@ -8,6 +8,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   String _outputText = "Press the Scan Button !";
   String _kodeScan = 'Try Again !';
 
@@ -18,24 +19,32 @@ class _HomePageState extends State<HomePage> {
       Navigator.pushNamed(context, '/info', arguments: _kodeScan);
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
-        setState(() => _outputText = "Camera Permission Denied");
+        showSnackbar('Camera Access Denied !');
         print(e);
       } else {
-        setState(() => _outputText = "Unknown Error : $e");
+        showSnackbar('Error Occured');
         print(e);
       }
     } on FormatException catch (e) {
-      _outputText = "Press the Scan Button !";
       print(e);
     } catch (e) {
-      setState(() => _outputText = "Unknown Error : $e");
+      showSnackbar('Error Occured');
       print(e);
     }
+  }
+
+  showSnackbar(String msg) {
+    final snack = SnackBar(
+      content: Text(msg),
+      duration: Duration(seconds: 2),
+    );
+    _scaffoldKey.currentState.showSnackBar(snack);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: AppBar(
         title: Text("QR Scanner"),
       ),
