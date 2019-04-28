@@ -9,7 +9,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String _outputText = "Press the Scan Button !";
   String _kodeScan = 'Try Again !';
 
   Future _scanQR() async {
@@ -48,11 +47,11 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text("QR Scanner"),
       ),
-      body: Center(
-        child: Text(
-          _outputText,
-          style: Theme.of(context).textTheme.headline,
-        ),
+      body: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[DisplayImage(), SizedBox(height: 30), DisplayText(),SizedBox(height: 50)],
       ),
       floatingActionButton: FloatingActionButton.extended(
         icon: Icon(Icons.camera),
@@ -60,6 +59,30 @@ class _HomePageState extends State<HomePage> {
         onPressed: _scanQR,
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+    );
+  }
+}
+
+class DisplayText extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(
+        'Press the Scan Button !',
+        style: Theme.of(context).textTheme.headline,
+      ),
+    );
+  }
+}
+
+class DisplayImage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    AssetImage assetImg = AssetImage('assets/images/qrcode.png');
+    Image image = Image(image: assetImg);
+
+    return Center(
+      child: image,
     );
   }
 }
