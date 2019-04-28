@@ -9,22 +9,27 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String _outputText = "Press the Scan Button !";
-  // String _kodeScan = 'X1OPJS2FF';
+  String _kodeScan = 'Try Again !';
 
   Future _scanQR() async {
     try {
       String qrResult = await BarcodeScanner.scan();
-      setState(() => _outputText = qrResult);
+      setState(() => _kodeScan = qrResult);
+      Navigator.pushNamed(context, '/info', arguments: _kodeScan);
     } on PlatformException catch (e) {
       if (e.code == BarcodeScanner.CameraAccessDenied) {
         setState(() => _outputText = "Camera Permission Denied");
+        print(e);
       } else {
         setState(() => _outputText = "Unknown Error : $e");
+        print(e);
       }
     } on FormatException catch (e) {
-      setState(() => _outputText = 'You pressed the Back Button');
+      _outputText = "Press the Scan Button !";
+      print(e);
     } catch (e) {
       setState(() => _outputText = "Unknown Error : $e");
+      print(e);
     }
   }
 
