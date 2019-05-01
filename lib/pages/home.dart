@@ -47,11 +47,15 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text("QR Scanner"),
       ),
-      body: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[DisplayImage(), SizedBox(height: 30), DisplayText(),SizedBox(height: 50)],
+      body: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            DisplayImage(),
+            SizedBox(height: 30),
+            DisplayText()
+          ],
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         icon: Icon(Icons.camera),
