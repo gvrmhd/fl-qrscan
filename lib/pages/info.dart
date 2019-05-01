@@ -14,26 +14,66 @@ class InfoPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: FutureBuilder(
-            future: Firestore.instance
-                .collection('information')
-                .document(kodeQR.trim())
-                .get(),
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return ListView(
-                  children: <Widget>[
-                    displayImage(snapshot.data['imageref']),
-                    SizedBox(height: 10),
-                    displayTitle(context, snapshot.data['title']),
-                    SizedBox(height: 5),
-                    displayInfo(context, snapshot.data['info']),
-                  ],
-                );
+          future: Firestore.instance
+              .collection('information')
+              .document(kodeQR.trim())
+              .get(),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError) {
+                return ErrorMessage();
               } else {
-                return Center(child: CircularProgressIndicator());
+                return DataListView(snapshot: snapshot);
               }
-            }),
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
       ),
+    );
+  }
+}
+
+class ErrorMessage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          errorText('QR Info Not Found !!'),
+          errorText('Please Try Again')
+        ],
+      ),
+    );
+  }
+
+  Widget errorText(String msg) {
+    return Text(
+      msg, style: TextStyle(
+        fontSize: 30,
+        fontWeight: FontWeight.w400,
+      ),
+    );
+  }
+}
+
+class DataListView extends StatelessWidget {
+  final AsyncSnapshot snapshot;
+
+  const DataListView({Key key, this.snapshot}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: <Widget>[
+        displayImage(snapshot.data['imageref']),
+        SizedBox(height: 10),
+        displayTitle(context, snapshot.data['title']),
+        SizedBox(height: 5),
+        displayInfo(context, snapshot.data['info']),
+      ],
     );
   }
 
@@ -45,18 +85,21 @@ class InfoPage extends StatelessWidget {
 
   Widget displayImage(String imageRef) {
     return Container(
-        height: 300,
-        child: Stack(
-          children: <Widget>[
-            Center(child: CircularProgressIndicator()),
-            Center(
-              child: FadeInImage.memoryNetwork(
-                image: imageRef,
-                placeholder: kTransparentImage,
-              ),
-            )
-          ],
-        ));
+      height: 200,
+      child: Stack(
+        children: <Widget>[
+          Center(
+            child: CircularProgressIndicator(),
+          ),
+          Center(
+            child: FadeInImage.memoryNetwork(
+              image: imageRef,
+              placeholder: kTransparentImage,
+            ),
+          )
+        ],
+      ),
+    );
   }
 
   Widget displayInfo(context, String info) {
