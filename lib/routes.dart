@@ -1,5 +1,5 @@
-import '../pages/info.dart';
-import '../pages/home.dart';
+import 'pages/info.dart';
+import 'pages/home.dart';
 
 final routesList = {
   '/' : (context) => new HomePage(),
