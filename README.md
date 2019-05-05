@@ -1,6 +1,6 @@
-# scan_kode
+# QRC Info
 
-A new Flutter project.
+A new Flutter project made by an Idiot.
 
 ## Getting Started
 
