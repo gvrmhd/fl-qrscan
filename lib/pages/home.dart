@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:barcode_scan/barcode_scan.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
@@ -9,7 +9,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-  String _kodeScan = 'Try Again !';
+  String _kodeScan;
 
   Future _scanQR() async {
     try {
@@ -40,53 +40,101 @@ class _HomePageState extends State<HomePage> {
     _scaffoldKey.currentState.showSnackBar(snack);
   }
 
+  Widget scanCardButton() {
+    final vHeight = MediaQuery.of(context).size.height;
+    final vWidth = MediaQuery.of(context).size.width;
+    final assetImg = AssetImage('assets/images/scanner.png');
+    final scanImage = Image(
+      image: assetImg,
+      height: 100,
+      color: Colors.white,
+    );
+    final hintText = Text(
+      'SCAN',
+      style: Theme.of(context).textTheme.headline.copyWith(
+            color: Colors.white,
+          ),
+    );
+
+    return Container(
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(25.0),
+            color: Color(0xFF44A08D),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black38,
+                offset: new Offset(3, 5),
+                blurRadius: 8,
+              ),
+            ]),
+        alignment: Alignment.center,
+        width: vWidth * 0.5,
+        height: vHeight * 0.3 - 5,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: _scanQR,
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  SizedBox(height: 5),
+                  scanImage,
+                  SizedBox(height: 30),
+                  hintText,
+                ],
+              ),
+            ),
+          ),
+        ));
+  }
+
+  Widget mainBody() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+            colors: [const Color(0xFF093637), const Color(0xFF44A08D)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter),
+      ),
+      child: Center(child: scanCardButton()),
+    );
+  }
+
+  Widget customAppBar() {
+    return Positioned(
+      top: 0,
+      right: 0,
+      left: 0,
+      child: AppBar(
+        title: Text('QR Scanner',
+            style: TextStyle(fontFamily: 'London', fontSize: 30)),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        centerTitle: true,
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.info,
+            ),
+            onPressed: () =>
+                Navigator.pushNamed(context, '/about', arguments: _kodeScan),
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      appBar: AppBar(
-        title: Text("QR Scanner"),
+      body: Stack(
+        children: <Widget>[
+          mainBody(),
+          customAppBar(),
+        ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            DisplayImage(),
-            SizedBox(height: 30),
-            DisplayText()
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        icon: Icon(Icons.camera),
-        label: Text("Scan"),
-        onPressed: _scanQR,
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    );
-  }
-}
-
-class DisplayText extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        'Press the Scan Button !',
-        style: Theme.of(context).textTheme.headline,
-      ),
-    );
-  }
-}
-
-class DisplayImage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    AssetImage assetImg = AssetImage('assets/images/qrcode.png');
-    Image image = Image(image: assetImg);
-
-    return Center(
-      child: image,
     );
   }
 }
