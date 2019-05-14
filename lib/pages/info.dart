@@ -4,12 +4,12 @@ import 'package:flutter/widgets.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
+import 'res/body.dart';
 
 class InfoPageLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String kodeQR = ModalRoute.of(context).settings.arguments;
-    final vHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       body: FutureBuilder(
@@ -19,95 +19,46 @@ class InfoPageLoader extends StatelessWidget {
             .get(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            DocumentSnapshot templist = snapshot.data;
-            Map<dynamic, dynamic> list = templist.data;
-
+            Map<dynamic, dynamic> list = snapshot.data.data;
             return list != null
                 ? InfoPage(data: list)
-                : customErrorPage(context, vHeight);
+                : customErrorPage(
+                    'Oops data tidak ditemukan ...\nSilahkan coba Lagi');
           }
           if (snapshot.hasError) {
-            return customErrorPage(context, vHeight);
+            return customErrorPage('Terjadi Kesalahan Koneksi');
           }
-          return mainBody(
-            vHeight,
-            child: Center(
-              child: CircularProgressIndicator(),
-            ),
+          return CustomBody(
+            noAppBar: true,
+            child: Center(child: CircularProgressIndicator()),
           );
         },
       ),
     );
   }
 
-  Widget customErrorPage(context, vHeight) {
-    return Stack(
-      children: <Widget>[
-        mainBody(
-          vHeight,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                Icon(
-                  Icons.error_outline,
-                  color: Colors.white,
-                  size: 80,
-                ),
-                SizedBox(height: 20),
-                Text(
-                  'Oops data tidak ditemukan ...\nSilahkan coba Lagi',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      color: Colors.white, fontSize: 33, fontFamily: 'London'),
-                ),
-              ],
+  Widget customErrorPage(String msg) {
+    return CustomBody(
+      appBarTitle: 'Error Page',
+      backNav: true,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Icon(
+              Icons.error_outline,
+              color: Colors.white,
+              size: 80,
             ),
-          ),
+            SizedBox(height: 20),
+            Text(
+              msg,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  color: Colors.white, fontSize: 33, fontFamily: 'London'),
+            ),
+          ],
         ),
-        customAppBar(context, title: 'ERROR'),
-      ],
-    );
-  }
-
-  Widget mainBody(vHeight, {Widget child}) {
-    return Container(
-      height: double.infinity,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-            colors: [const Color(0xFF093637), const Color(0xFF44A08D)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter),
-      ),
-      child: Container(
-        margin: EdgeInsets.only(top: vHeight * 0.1),
-        child: child,
-      ),
-    );
-  }
-
-  Widget customAppBar(context, {String title: ''}) {
-    return Positioned(
-      top: 0,
-      right: 0,
-      left: 0,
-      child: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.keyboard_arrow_left,
-            size: 35,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(fontFamily: 'London', fontSize: 30),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
       ),
     );
   }
@@ -133,19 +84,11 @@ class _InfoPageState extends State<InfoPage> {
     vWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      body: customMainPage(),
-    );
-  }
-
-  Widget customMainPage() {
-    return Stack(
-      children: <Widget>[
-        mainBody(
-          vHeight,
-          child: pageContent(),
-        ),
-        customAppBar(context, title: widget.data['title']),
-      ],
+      body: CustomBody(
+        child: pageContent(),
+        appBarTitle: widget.data['title'],
+        backNav: true,
+      ),
     );
   }
 
@@ -271,7 +214,8 @@ class _InfoPageState extends State<InfoPage> {
   }
 
   _launchURL() async {
-    final url = widget.data['gmap'];
+    final url = widget.data['gmap'].toString().trim();
+    print(url);
     if (await canLaunch(url)) {
       await launch(url);
     } else {
@@ -280,43 +224,45 @@ class _InfoPageState extends State<InfoPage> {
   }
 
   Widget locationInfo() {
-    return Container(
-        height: vHeight * 0.15,
-        padding: EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: Colors.white30,
-          borderRadius: BorderRadius.circular(5.0),
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: () => _launchURL(),
-            child: Column(
-              children: <Widget>[
-                CircleAvatar(
-                    radius: 25,
-                    child: Image.asset(
-                      'assets/icons/gmap.png',
-                      height: 32,
-                      color: Colors.white,
-                    )),
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      "${widget.data['place']}",
-                      style: TextStyle(
-                          fontSize: 20,
-                          color: Color(0xFF093637),
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'CaviarDreams'),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                )
-              ],
-            ),
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(5.0),
+        onTap: () => _launchURL(),
+        child: Container(
+          height: vHeight * 0.15,
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Colors.white30,
+            borderRadius: BorderRadius.circular(5.0),
           ),
-        ));
+          child: Column(
+            children: <Widget>[
+              CircleAvatar(
+                  radius: 25,
+                  child: Image.asset(
+                    'assets/icons/gmap.png',
+                    height: 32,
+                    color: Colors.white,
+                  )),
+              Expanded(
+                child: Center(
+                  child: Text(
+                    "${widget.data['place']}",
+                    style: TextStyle(
+                        fontSize: 20,
+                        color: Color(0xFF093637),
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'CaviarDreams'),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              )
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget dateInfo() {
@@ -348,47 +294,6 @@ class _InfoPageState extends State<InfoPage> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget mainBody(vHeight, {Widget child}) {
-    return Container(
-      height: double.infinity,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-            colors: [const Color(0xFF093637), const Color(0xFF44A08D)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter),
-      ),
-      child: Container(
-        margin: EdgeInsets.only(top: vHeight * 0.1),
-        child: child,
-      ),
-    );
-  }
-
-  Widget customAppBar(context, {String title: ''}) {
-    return Positioned(
-      top: 0,
-      right: 0,
-      left: 0,
-      child: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.keyboard_arrow_left,
-            size: 35,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(fontFamily: 'London', fontSize: 30),
-        ),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
       ),
     );
   }

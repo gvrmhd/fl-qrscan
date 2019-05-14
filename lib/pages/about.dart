@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'res/body.dart';
 
 class AboutPage extends StatefulWidget {
   @override
@@ -12,11 +13,10 @@ class _AboutPageState extends State<AboutPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      body: Stack(
-        children: <Widget>[
-          mainBody(),
-          customAppBar(),
-        ],
+      body: CustomBody(
+        child: pageContent(),
+        backNav: true,
+        appBarTitle: 'About Page',
       ),
     );
   }
@@ -27,7 +27,7 @@ class _AboutPageState extends State<AboutPage> {
       duration: Duration(seconds: 2),
       action: SnackBarAction(
         label: '" I Know "',
-        onPressed: (){},
+        onPressed: () {},
       ),
     );
     _scaffoldKey.currentState.showSnackBar(snack);
@@ -50,39 +50,6 @@ class _AboutPageState extends State<AboutPage> {
                 Theme.of(context).textTheme.title.copyWith(color: Colors.white),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget mainBody() {
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-            colors: [const Color(0xFF093637), const Color(0xFF44A08D)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter),
-      ),
-      child: Center(child: pageContent()),
-    );
-  }
-
-  Widget customAppBar() {
-    return Positioned(
-      top: 0,
-      right: 0,
-      left: 0,
-      child: AppBar(
-        leading: IconButton(
-          icon: Icon(
-            Icons.keyboard_arrow_left,
-            size: 35,
-          ),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text('About Us'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        centerTitle: true,
       ),
     );
   }
