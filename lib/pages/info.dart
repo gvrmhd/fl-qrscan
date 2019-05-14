@@ -137,15 +137,8 @@ class _InfoPageState extends State<InfoPage> {
         builder: (context) => Scaffold(
               backgroundColor: Colors.black,
               body: Center(
-                child: PhotoView(
-                  imageProvider: NetworkImage(ref),
-                  heroTag: ref
-                )
-                // Hero(
-                //   tag: ref,
-                //   child: Image.network(ref),
-                // ),
-              ),
+                  child: PhotoView(
+                      imageProvider: NetworkImage(ref), heroTag: ref)q),
             )));
   }
 
