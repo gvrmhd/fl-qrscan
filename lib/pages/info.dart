@@ -133,20 +133,23 @@ class _InfoPageState extends State<InfoPage> {
   }
 
   _zoomImage(ref) {
-    Navigator.of(context).push(MaterialPageRoute(
+    Navigator.of(context).push(
+      MaterialPageRoute(
         builder: (context) => Scaffold(
               backgroundColor: Colors.black,
               body: Center(
-                child: PhotoView(
-                  imageProvider: NetworkImage(ref),
-                  heroTag: ref
-                )
-                // Hero(
-                //   tag: ref,
-                //   child: Image.network(ref),
-                // ),
-              ),
-            )));
+                  child: PhotoView(
+                imageProvider: NetworkImage(ref),
+                heroTag: ref,
+              )
+                  // Hero(
+                  //   tag: ref,
+                  //   child: Image.network(ref),
+                  // ),
+                  ),
+            ),
+      ),
+    );
   }
 
   Widget carouselWithIndicator() {
