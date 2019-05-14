@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 import 'res/body.dart';
 
 class InfoPageLoader extends StatelessWidget {
@@ -136,10 +137,14 @@ class _InfoPageState extends State<InfoPage> {
         builder: (context) => Scaffold(
               backgroundColor: Colors.black,
               body: Center(
-                child: Hero(
-                  tag: ref,
-                  child: Image.network(ref),
-                ),
+                child: PhotoView(
+                  imageProvider: NetworkImage(ref),
+                  heroTag: ref
+                )
+                // Hero(
+                //   tag: ref,
+                //   child: Image.network(ref),
+                // ),
               ),
             )));
   }
