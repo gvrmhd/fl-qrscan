@@ -1,6 +1,6 @@
 # QRC Info
 
-A new Flutter project made by an Idiot.
+A new Flutter project.
 
 ## Getting Started
 
